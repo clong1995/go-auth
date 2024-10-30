@@ -10,34 +10,16 @@ import (
 )
 
 // SecretAccess 编码sk
-func SecretAccess(accessKeyID string) (id uint64, secretAccessKey string, err error) {
-	bs, err := decodeB64(accessKeyID)
+func SecretAccess(ak string) (secretAccessKey string, err error) {
+	id, session, err := Id(ak)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	buff := bytes.NewBuffer(bs)
 	b := make([]byte, 8)
-
-	//提取时间戳
-	if _, err = buff.Read(b); err != nil {
-		log.Println(err)
-		return
-	}
-	session := binary.LittleEndian.Uint64(b)
-
-	//提取id
-	if _, err = buff.Read(b); err != nil {
-		log.Println(err)
-		return
-	}
-	id = binary.LittleEndian.Uint64(b) - session
-
-	b = make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, (session+id)*2)
 	secretAccessKey = encodeB64(b)
-
 	return
 }
 
@@ -57,6 +39,34 @@ func AccessID(id uint64) string {
 
 	//返回string
 	return base64.RawURLEncoding.EncodeToString(tsBytes)
+}
+
+// Id 获取id
+func Id(ak string) (id, session uint64, err error) {
+	bs, err := decodeB64(ak)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	buff := bytes.NewBuffer(bs)
+	b := make([]byte, 8)
+
+	//提取时间戳
+	if _, err = buff.Read(b); err != nil {
+		log.Println(err)
+		return
+	}
+	session = binary.LittleEndian.Uint64(b)
+
+	//提取id
+	if _, err = buff.Read(b); err != nil {
+		log.Println(err)
+		return
+	}
+	id = binary.LittleEndian.Uint64(b) - session
+
+	return
 }
 
 // base64 加密byte[]为string，可用于url

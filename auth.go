@@ -17,28 +17,27 @@ type auth struct {
 }
 
 // Check 解码auth
-func Check(sign string, body io.Reader, buf *bytes.Buffer) (id uint64, err error) {
+func Check(sign string, body io.Reader, buf *bytes.Buffer) (ak string, err error) {
 	tee := io.TeeReader(body, buf)
 	a := new(auth)
 	if err = json.Decode(tee, a); err != nil {
 		log.Println(err)
 		return
 	}
-
 	ts := time.Now().Unix()
 	if !(a.Timestamp-60 <= ts && ts <= a.Timestamp+60) {
 		err = fmt.Errorf("时间已过期")
 		log.Println(err)
 		return
 	}
+	ak = a.AccessKeyID
 
-	id, sk, err := SecretAccess(a.AccessKeyID)
+	resign, err := Sign(buf.Bytes(), ak)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-
-	if sign != Sign(buf.Bytes(), sk) {
+	if resign != sign {
 		err = fmt.Errorf("数据签名检验失败")
 		log.Println(err)
 		return
@@ -48,10 +47,16 @@ func Check(sign string, body io.Reader, buf *bytes.Buffer) (id uint64, err error
 }
 
 // Sign 签名
-func Sign(respByte []byte, sk string) string {
+func Sign(respByte []byte, ak string) (sign string, err error) {
+	sk, err := SecretAccess(ak)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	respByte = append(respByte, []byte(sk)...)
 	sum := md5.Sum(respByte)
-	return hex.EncodeToString(sum[:])
+	sign = hex.EncodeToString(sum[:])
+	return
 }
 
 //增值
