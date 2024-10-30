@@ -11,7 +11,7 @@ import (
 
 // SecretAccess 编码sk
 func SecretAccess(ak string) (secretAccessKey string, err error) {
-	id, session, err := Id(ak)
+	id, session, err := ID(ak)
 	if err != nil {
 		log.Println(err)
 		return
@@ -41,8 +41,8 @@ func AccessID(id uint64) string {
 	return base64.RawURLEncoding.EncodeToString(tsBytes)
 }
 
-// Id 获取id
-func Id(ak string) (id, session uint64, err error) {
+// ID 获取id
+func ID(ak string) (id, session uint64, err error) {
 	bs, err := decodeB64(ak)
 	if err != nil {
 		log.Println(err)
