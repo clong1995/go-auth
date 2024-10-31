@@ -47,14 +47,14 @@ func Check(sign string, body io.Reader, buf *bytes.Buffer) (ak string, err error
 }
 
 // Sign 签名
-func Sign(respByte []byte, ak string) (sign string, err error) {
+func Sign(bytes []byte, ak string) (sign string, err error) {
 	sk, err := SecretAccess(ak)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	respByte = append(respByte, []byte(sk)...)
-	sum := md5.Sum(respByte)
+	bytes = append(bytes, []byte(sk)...)
+	sum := md5.Sum(bytes)
 	sign = hex.EncodeToString(sum[:])
 	return
 }

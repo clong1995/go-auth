@@ -26,7 +26,7 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 // AccessID 编码ak
 func AccessID(id uint64) string {
 	//加入时间戳
-	session := uint64(time.Now().UnixNano())
+	session := uint64(time.Now().UnixMicro())
 	tsBytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(tsBytes, session)
 
