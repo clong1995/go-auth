@@ -3,9 +3,9 @@ package auth
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/clong1995/go-encipher/json"
-	"io"
 	"log"
 	"time"
 )
@@ -16,10 +16,9 @@ type auth struct {
 }
 
 // Check 解码auth
-func Check(sign string, reader io.Reader) (ak string, err error) {
+func Check(sign string, req []byte) (ak string, err error) {
 	a := new(auth)
-	var buf *bytes.Buffer
-	if err = json.Decode(io.TeeReader(reader, buf), a); err != nil {
+	if err = json.Decode(bytes.NewBuffer(req), a); err != nil {
 		log.Println(err)
 		return
 	}
@@ -31,7 +30,7 @@ func Check(sign string, reader io.Reader) (ak string, err error) {
 	}
 	ak = a.AccessKeyID
 
-	resign, err := Sign(buf, ak)
+	resign, err := Sign(req, ak)
 	if err != nil {
 		log.Println(err)
 		return
@@ -46,20 +45,16 @@ func Check(sign string, reader io.Reader) (ak string, err error) {
 }
 
 // Sign 签名
-func Sign(reader io.Reader, ak string) (sign string, err error) {
+func Sign(req []byte, ak string) (sign string, err error) {
 	sk, err := SecretAccess(ak)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	hash := md5.New()
-	_, err = io.Copy(hash, reader)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	hash.Write(req)
 	md5Sum := hash.Sum([]byte(sk))
-	sign = fmt.Sprintf("%x", md5Sum)
+	sign = hex.EncodeToString(md5Sum)
 	return
 }
 
