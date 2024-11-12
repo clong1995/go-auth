@@ -32,3 +32,30 @@ func TestSign(t *testing.T) {
 		})
 	}
 }
+
+func TestCheck(t *testing.T) {
+	type args struct {
+		sign string
+		req  []byte
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantAk  string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotAk, err := Check(tt.args.sign, tt.args.req)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Check() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotAk != tt.wantAk {
+				t.Errorf("Check() gotAk = %v, want %v", gotAk, tt.wantAk)
+			}
+		})
+	}
+}

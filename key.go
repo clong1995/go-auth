@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/binary"
-	"fmt"
 	"log"
 	"time"
 )
@@ -24,9 +23,9 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 }
 
 // AccessID 编码ak
-func AccessID(id uint64) string {
+func AccessID(id uint64) (session uint64, ak string) {
 	//加入时间戳
-	session := uint64(time.Now().UnixMicro())
+	session = uint64(time.Now().UnixMicro())
 	tsBytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(tsBytes, session)
 
@@ -37,8 +36,8 @@ func AccessID(id uint64) string {
 	//合并
 	tsBytes = append(tsBytes, idBytes...)
 
-	//返回string
-	return base64.RawURLEncoding.EncodeToString(tsBytes)
+	ak = base64.RawURLEncoding.EncodeToString(tsBytes)
+	return
 }
 
 // ID 获取id
@@ -77,8 +76,6 @@ func encodeB64(bytes []byte) string {
 // 解密base64的string为byte[]
 func decodeB64(str string) (bytes []byte, err error) {
 	if str == "" {
-		err = fmt.Errorf("base64Str is empty")
-		log.Println(err)
 		return
 	}
 	if bytes, err = base64.RawURLEncoding.DecodeString(str); err != nil {
