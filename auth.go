@@ -35,6 +35,7 @@ func Check(sign string, req []byte) (ak string, err error) {
 		log.Println(err)
 		return
 	}
+
 	if resign != sign {
 		err = fmt.Errorf("数据签名检验失败")
 		log.Println(err)
@@ -51,12 +52,10 @@ func Sign(req []byte, ak string) (sign string, err error) {
 		log.Println(err)
 		return
 	}
+
 	hash := md5.New()
-	hash.Write(req)
-	md5Sum := hash.Sum([]byte(sk))
+	hash.Write(append(req, []byte(sk)...))
+	md5Sum := hash.Sum(nil)
 	sign = hex.EncodeToString(md5Sum)
 	return
 }
-
-//增值
-//自己跟自己比，不要跟别人比

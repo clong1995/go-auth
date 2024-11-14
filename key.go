@@ -10,6 +10,9 @@ import (
 
 // SecretAccess 编码sk
 func SecretAccess(ak string) (secretAccessKey string, err error) {
+	if ak == "" {
+		return
+	}
 	id, session, err := ID(ak)
 	if err != nil {
 		log.Println(err)
@@ -24,6 +27,9 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 
 // AccessID 编码ak
 func AccessID(id uint64) (session uint64, ak string) {
+	if id == 0 {
+		return
+	}
 	//加入时间戳
 	session = uint64(time.Now().UnixMicro())
 	tsBytes := make([]byte, 8)
@@ -42,6 +48,9 @@ func AccessID(id uint64) (session uint64, ak string) {
 
 // ID 获取id
 func ID(ak string) (id, session uint64, err error) {
+	if ak == "" {
+		return
+	}
 	bs, err := decodeB64(ak)
 	if err != nil {
 		log.Println(err)
@@ -75,9 +84,6 @@ func encodeB64(bytes []byte) string {
 
 // 解密base64的string为byte[]
 func decodeB64(str string) (bytes []byte, err error) {
-	if str == "" {
-		return
-	}
 	if bytes, err = base64.RawURLEncoding.DecodeString(str); err != nil {
 		log.Println(err)
 		return

@@ -17,8 +17,8 @@ func TestAccessID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := AccessID(tt.args.id)
-			t.Logf("AccessID() = %v", got)
+			session, ak := AccessID(tt.args.id)
+			t.Logf("AccessID() = %v,%v", session, ak)
 		})
 	}
 }
