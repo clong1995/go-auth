@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"log"
-	"time"
 )
 
 // SecretAccess 编码sk
@@ -26,12 +25,10 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 }
 
 // AccessID 编码ak
-func AccessID(id uint64) (session uint64, ak string) {
+func AccessID(id, session uint64) (ak string) {
 	if id == 0 {
 		return
 	}
-	//加入时间戳
-	session = uint64(time.Now().UnixMicro())
 	tsBytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(tsBytes, session)
 
