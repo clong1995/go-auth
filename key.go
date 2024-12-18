@@ -1,15 +1,17 @@
 package auth
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/binary"
+	"errors"
 	"log"
 )
 
 // SecretAccess 编码sk
 func SecretAccess(ak string) (secretAccessKey string, err error) {
 	if ak == "" {
+		err = errors.New("secret access key is empty")
+		log.Println(err)
 		return
 	}
 	id, session, err := ID(ak)
@@ -18,34 +20,35 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 		return
 	}
 
+	encodedValue := (session + id) * 2
 	b := make([]byte, 8)
-	binary.LittleEndian.PutUint64(b, (session+id)*2)
+	binary.LittleEndian.PutUint64(b, uint64(encodedValue))
+
 	secretAccessKey = encodeB64(b)
 	return
 }
 
 // AccessID 编码ak
-func AccessID(id, session uint64) (ak string) {
+func AccessID(id, session int64) (ak string, err error) {
 	if id == 0 {
+		err = errors.New("access id is empty")
+		log.Println(err)
 		return
 	}
-	tsBytes := make([]byte, 8)
-	binary.LittleEndian.PutUint64(tsBytes, session)
 
-	//加入id
-	idBytes := make([]byte, 8)
-	binary.LittleEndian.PutUint64(idBytes, id+session)
-
-	//合并
-	tsBytes = append(tsBytes, idBytes...)
+	tsBytes := make([]byte, 16)
+	binary.LittleEndian.PutUint64(tsBytes[:8], uint64(session))
+	binary.LittleEndian.PutUint64(tsBytes[8:], uint64(id+session))
 
 	ak = base64.RawURLEncoding.EncodeToString(tsBytes)
 	return
 }
 
 // ID 获取id
-func ID(ak string) (id, session uint64, err error) {
+func ID(ak string) (id, session int64, err error) {
 	if ak == "" {
+		err = errors.New("secret access key is empty")
+		log.Println(err)
 		return
 	}
 	bs, err := decodeB64(ak)
@@ -54,22 +57,16 @@ func ID(ak string) (id, session uint64, err error) {
 		return
 	}
 
-	buff := bytes.NewBuffer(bs)
-	b := make([]byte, 8)
-
-	//提取时间戳
-	if _, err = buff.Read(b); err != nil {
+	if len(bs) < 16 {
+		err = errors.New("invalid access key length")
 		log.Println(err)
 		return
 	}
-	session = binary.LittleEndian.Uint64(b)
 
-	//提取id
-	if _, err = buff.Read(b); err != nil {
-		log.Println(err)
-		return
-	}
-	id = binary.LittleEndian.Uint64(b) - session
+	session = int64(binary.LittleEndian.Uint64(bs[:8]))
+	id = int64(binary.LittleEndian.Uint64(bs[8:16]))
+
+	id -= session
 
 	return
 }
