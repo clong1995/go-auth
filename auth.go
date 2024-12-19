@@ -52,9 +52,17 @@ func Sign(req []byte, ak string) (sign string, err error) {
 		log.Println(err)
 		return
 	}
-
 	hash := md5.New()
 	hash.Write(append(req, []byte(sk)...))
+	md5Sum := hash.Sum(nil)
+	sign = hex.EncodeToString(md5Sum)
+	return
+}
+
+// NoSign 没有签名
+func NoSign(req []byte) (sign string, err error) {
+	hash := md5.New()
+	hash.Write(req)
 	md5Sum := hash.Sum(nil)
 	sign = hex.EncodeToString(md5Sum)
 	return
