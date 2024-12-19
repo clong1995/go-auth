@@ -7,8 +7,8 @@ import (
 	"log"
 )
 
-// SecretAccess 编码sk
-func SecretAccess(ak string) (secretAccessKey string, err error) {
+// SecretAccess 通过ak编码sk
+func SecretAccess(ak string, encode ...func(session int64, id int64) int64) (secretAccessKey string, err error) {
 	if ak == "" {
 		err = errors.New("secret access key is empty")
 		log.Println(err)
@@ -19,8 +19,13 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 		log.Println(err)
 		return
 	}
+	var encodedValue int64
+	if len(encode) == 0 {
+		encodedValue = (session + id) * 2
+	} else {
+		encodedValue = encode[0](session, id)
+	}
 
-	encodedValue := (session + id) * 2
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, uint64(encodedValue))
 

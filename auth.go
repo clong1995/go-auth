@@ -15,7 +15,7 @@ type auth struct {
 	Timestamp   int64  `json:"t"`
 }
 
-// Check 解码auth
+// Check 提取用户id，校验数据签名
 func Check(sign string, req []byte) (ak string, err error) {
 	a := new(auth)
 	if err = json.Decode(bytes.NewBuffer(req), a); err != nil {
