@@ -15,7 +15,7 @@ type auth struct {
 	Timestamp   int64  `json:"t"`
 }
 
-// Check 提取用户id，校验数据签名
+// Check 提取数据中用户ak,校验数据签名
 func Check(sign string, req []byte) (ak string, err error) {
 	a := new(auth)
 	if err = json.Decode(bytes.NewBuffer(req), a); err != nil {
@@ -45,24 +45,17 @@ func Check(sign string, req []byte) (ak string, err error) {
 	return
 }
 
-// Sign 签名
+// Sign 通过ak提取sk进行数据签名
 func Sign(req []byte, ak string) (sign string, err error) {
-	sk, err := SecretAccess(ak)
-	if err != nil {
-		log.Println(err)
-		return
+	var sk string
+	if ak != "" {
+		if sk, err = SecretAccess(ak); err != nil {
+			log.Println(err)
+			return
+		}
 	}
 	hash := md5.New()
 	hash.Write(append(req, []byte(sk)...))
-	md5Sum := hash.Sum(nil)
-	sign = hex.EncodeToString(md5Sum)
-	return
-}
-
-// NoSign 没有签名
-func NoSign(req []byte) (sign string, err error) {
-	hash := md5.New()
-	hash.Write(req)
 	md5Sum := hash.Sum(nil)
 	sign = hex.EncodeToString(md5Sum)
 	return

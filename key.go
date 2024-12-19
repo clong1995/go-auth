@@ -7,8 +7,15 @@ import (
 	"log"
 )
 
+var encode func(session int64, id int64) int64
+
+// Encode 设置sk的生成逻辑
+func Encode(e func(session int64, id int64) int64) {
+	encode = e
+}
+
 // SecretAccess 通过ak编码sk
-func SecretAccess(ak string, encode ...func(session int64, id int64) int64) (secretAccessKey string, err error) {
+func SecretAccess(ak string) (secretAccessKey string, err error) {
 	if ak == "" {
 		err = errors.New("secret access key is empty")
 		log.Println(err)
@@ -20,10 +27,10 @@ func SecretAccess(ak string, encode ...func(session int64, id int64) int64) (sec
 		return
 	}
 	var encodedValue int64
-	if len(encode) == 0 {
-		encodedValue = (session + id) * 2
+	if encode != nil {
+		encodedValue = encode(session, id)
 	} else {
-		encodedValue = encode[0](session, id)
+		encodedValue = (session + id) * 2
 	}
 
 	b := make([]byte, 8)
