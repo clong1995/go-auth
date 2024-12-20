@@ -4,7 +4,8 @@ import "testing"
 
 func TestAccessID(t *testing.T) {
 	type args struct {
-		id uint64
+		id      int64
+		session int64
 	}
 	tests := []struct {
 		name string
@@ -12,12 +13,15 @@ func TestAccessID(t *testing.T) {
 	}{
 		{
 			name: "编码ak",
-			args: args{id: 530835276348522509},
+			args: args{
+				id:      530835276348522509,
+				session: 530835276348522509,
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			session, ak := AccessID(tt.args.id)
+			session, ak := AccessID(tt.args.id, tt.args.session)
 			t.Logf("AccessID() = %v,%v", session, ak)
 		})
 	}
