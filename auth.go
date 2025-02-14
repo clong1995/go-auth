@@ -56,7 +56,7 @@ func Sign(req []byte, ak string) (sign string, err error) {
 		}
 	}
 	hash := md5.New()
-	hash.Write(append(req, []byte(sk)...))
+	hash.Write(append(req, sk...))
 	md5Sum := hash.Sum(nil)
 	sign = hex.EncodeToString(md5Sum)
 	return
