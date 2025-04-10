@@ -55,6 +55,11 @@ func Check(sign string, out int, req []byte) (ak string, err error) {
 
 // Sign 通过ak提取sk进行数据签名
 func Sign(req []byte, ak string) (sign string, err error) {
+	if ak == "" {
+		err = errors.New("secret access key is empty")
+		log.Println(err)
+		return
+	}
 	var sk string
 	if sk, err = SecretAccess(ak); err != nil {
 		log.Println(err)
