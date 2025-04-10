@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/clong1995/go-encipher/json"
 	"log"
@@ -22,6 +23,12 @@ func Check(sign string, out int, req []byte) (ak string, err error) {
 		log.Println(err)
 		return
 	}
+	if a.AccessKeyID == "" {
+		err = errors.New("missing access key id")
+		log.Println(err)
+		return
+	}
+
 	ts := time.Now().Unix()
 	o := int64(out)
 	if !(a.Timestamp-o <= ts && ts <= a.Timestamp+o) {
