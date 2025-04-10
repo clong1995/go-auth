@@ -49,11 +49,9 @@ func Check(sign string, out int, req []byte) (ak string, err error) {
 // Sign 通过ak提取sk进行数据签名
 func Sign(req []byte, ak string) (sign string, err error) {
 	var sk string
-	if ak != "" {
-		if sk, err = SecretAccess(ak); err != nil {
-			log.Println(err)
-			return
-		}
+	if sk, err = SecretAccess(ak); err != nil {
+		log.Println(err)
+		return
 	}
 	hash := md5.New()
 	hash.Write(append(req, sk...))
