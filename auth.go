@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/clong1995/go-encipher/json"
 	"log"
@@ -22,6 +23,12 @@ func Check(sign string, out int, req []byte) (ak string, err error) {
 		log.Println(err)
 		return
 	}
+	if a.AccessKeyID == "" {
+		err = errors.New("missing access key id")
+		log.Println(err)
+		return
+	}
+
 	ts := time.Now().Unix()
 	o := int64(out)
 	if !(a.Timestamp-o <= ts && ts <= a.Timestamp+o) {
@@ -48,15 +55,18 @@ func Check(sign string, out int, req []byte) (ak string, err error) {
 
 // Sign 通过ak提取sk进行数据签名
 func Sign(req []byte, ak string) (sign string, err error) {
+	if ak == "" {
+		err = errors.New("secret access key is empty")
+		log.Println(err)
+		return
+	}
 	var sk string
-	if ak != "" {
-		if sk, err = SecretAccess(ak); err != nil {
-			log.Println(err)
-			return
-		}
+	if sk, err = SecretAccess(ak); err != nil {
+		log.Println(err)
+		return
 	}
 	hash := md5.New()
-	hash.Write(append(req, []byte(sk)...))
+	hash.Write(append(req, sk...))
 	md5Sum := hash.Sum(nil)
 	sign = hex.EncodeToString(md5Sum)
 	return
