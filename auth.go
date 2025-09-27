@@ -6,9 +6,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/clong1995/go-encipher/json"
 	"log"
 	"time"
+
+	"github.com/clong1995/go-encipher/json"
 )
 
 type auth struct {
