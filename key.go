@@ -7,10 +7,10 @@ import (
 	"log"
 )
 
-var encode func(session int64, id int64) int64
+var encode func(session int64, id int64) []byte
 
-// Encode 设置sk的生成逻辑
-func Encode(e func(session int64, id int64) int64) {
+// SetEncode 设置sk的生成逻辑
+func SetEncode(e func(session int64, id int64) []byte) {
 	encode = e
 }
 
@@ -26,17 +26,18 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 		log.Println(err)
 		return
 	}
-	var encodedValue int64
+	var encodedValue []byte
 	if encode != nil {
+		//自己的私有算法
 		encodedValue = encode(session, id)
 	} else {
-		encodedValue = (session + id) * 2
+		//简单拼接
+		encodedValue = make([]byte, 16)
+		binary.BigEndian.PutUint64(encodedValue[0:8], uint64(id))
+		binary.BigEndian.PutUint64(encodedValue[8:16], uint64(session))
 	}
 
-	b := make([]byte, 8)
-	binary.LittleEndian.PutUint64(b, uint64(encodedValue))
-
-	secretAccessKey = encodeB64(b)
+	secretAccessKey = encodeB64(encodedValue)
 	return
 }
 
