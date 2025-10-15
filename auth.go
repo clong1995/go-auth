@@ -18,7 +18,7 @@ type auth struct {
 }
 
 // Check 提取数据中用户ak,校验数据签名
-func Check(sign string, out int, req []byte) (ak string, err error) {
+func Check(sign string, out int64, req []byte) (ak string, err error) {
 	a := new(auth)
 	if err = json.Decode(bytes.NewBuffer(req), a); err != nil {
 		log.Println(err)
@@ -31,8 +31,8 @@ func Check(sign string, out int, req []byte) (ak string, err error) {
 	}
 
 	ts := time.Now().Unix()
-	o := int64(out)
-	if !(a.Timestamp-o <= ts && ts <= a.Timestamp+o) {
+	//o := int64(out)
+	if !(a.Timestamp-out <= ts && ts <= a.Timestamp+out) {
 		err = fmt.Errorf("时间已过期")
 		log.Println(err)
 		return
