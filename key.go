@@ -1,18 +1,10 @@
 package auth
 
 import (
-	"encoding/base64"
 	"encoding/binary"
 	"errors"
 	"log"
 )
-
-var encode func(session int64, id int64) []byte
-
-// SetEncode 设置sk的生成逻辑
-func SetEncode(e func(session int64, id int64) []byte) {
-	encode = e
-}
 
 // SecretAccess 通过ak编码sk
 func SecretAccess(ak string) (secretAccessKey string, err error) {
@@ -26,18 +18,7 @@ func SecretAccess(ak string) (secretAccessKey string, err error) {
 		log.Println(err)
 		return
 	}
-	var encodedValue []byte
-	if encode != nil {
-		//自己的私有算法
-		encodedValue = encode(session, id)
-	} else {
-		//简单拼接
-		encodedValue = make([]byte, 16)
-		binary.BigEndian.PutUint64(encodedValue[0:8], uint64(id))
-		binary.BigEndian.PutUint64(encodedValue[8:16], uint64(session))
-	}
-
-	secretAccessKey = encodeB64(encodedValue)
+	secretAccessKey = secretAccess(id, session)
 	return
 }
 
@@ -53,7 +34,7 @@ func AccessID(id, session int64) (ak string, err error) {
 	binary.LittleEndian.PutUint64(tsBytes[:8], uint64(session))
 	binary.LittleEndian.PutUint64(tsBytes[8:], uint64(id+session))
 
-	ak = base64.RawURLEncoding.EncodeToString(tsBytes)
+	ak = encodeB64(tsBytes)
 	return
 }
 
@@ -84,16 +65,11 @@ func ID(ak string) (id, session int64, err error) {
 	return
 }
 
-// base64 加密byte[]为string，可用于url
-func encodeB64(bytes []byte) string {
-	return base64.RawURLEncoding.EncodeToString(bytes)
-}
-
-// 解密base64的string为byte[]
-func decodeB64(str string) (bytes []byte, err error) {
-	if bytes, err = base64.RawURLEncoding.DecodeString(str); err != nil {
-		log.Println(err)
-		return
-	}
+// 编码sk
+func secretAccess(id int64, session int64) (key string) {
+	i := (session + id) * 2
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(i))
+	key = encodeB64(b)
 	return
 }
