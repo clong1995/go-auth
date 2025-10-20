@@ -12,19 +12,19 @@ import (
 	"github.com/clong1995/go-encipher/json"
 )
 
-type auth struct {
-	AccessKeyID string `json:"a"`
-	Timestamp   int64  `json:"t"`
-}
-
 // Check 提取数据中用户ak,校验数据签名
 func Check(sign string, out int64, req []byte) (ak string, err error) {
-	a := new(auth)
-	if err = json.Decode(bytes.NewBuffer(req), a); err != nil {
+	type preData struct {
+		AccessKeyID string `json:"a"`
+		Timestamp   int64  `json:"t"`
+	}
+
+	pData := new(preData)
+	if err = json.Decode(bytes.NewBuffer(req), pData); err != nil {
 		log.Println(err)
 		return
 	}
-	if a.AccessKeyID == "" {
+	if pData.AccessKeyID == "" {
 		err = errors.New("missing access key id")
 		log.Println(err)
 		return
@@ -32,12 +32,12 @@ func Check(sign string, out int64, req []byte) (ak string, err error) {
 
 	ts := time.Now().Unix()
 	//o := int64(out)
-	if !(a.Timestamp-out <= ts && ts <= a.Timestamp+out) {
+	if !(pData.Timestamp-out <= ts && ts <= pData.Timestamp+out) {
 		err = fmt.Errorf("时间已过期")
 		log.Println(err)
 		return
 	}
-	ak = a.AccessKeyID
+	ak = pData.AccessKeyID
 
 	resign, err := Sign(req, ak)
 	if err != nil {
