@@ -3,32 +3,18 @@ package auth
 import (
 	"encoding/base64"
 
-	"github.com/clong1995/go-config"
 	"github.com/pkg/errors"
 )
-
-var authKey []byte
-var authKeyLen int
-
-// init 函数在包初始化时执行。
-// 它会尝试从配置中读取名为 "AUTH KEY" 的值。
-// 如果该值存在，则将其作为密钥存储在包级变量 authKey 中，用于后续的XOR操作。
-func init() {
-	if key, exists := config.Value[string]("AUTH KEY"); exists && key != "" {
-		authKey = []byte(key)
-		authKeyLen = len(authKey)
-	}
-}
 
 // xor 函数对传入的字节切片进行原地XOR（异或）操作。
 // 它使用 init 函数中加载的 authKey 作为密钥。
 // 这是一个简单的对称加密/混淆方法，密钥的每个字节会与数据循环异或。
 func xor(data []byte) {
-	if authKeyLen == 0 {
+	if configAuthKey == "" {
 		return
 	}
 	for i := 0; i < len(data); i++ {
-		data[i] = data[i] ^ authKey[i%authKeyLen]
+		data[i] = data[i] ^ configAuthKey[i%len(configAuthKey)]
 	}
 	return
 }
