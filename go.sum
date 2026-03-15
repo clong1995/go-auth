@@ -2,5 +2,7 @@ github.com/clong1995/go-ansi-color v0.0.0-20260314102151-cbbdfbe952a8 h1:q6HnwjA
 github.com/clong1995/go-ansi-color v0.0.0-20260314102151-cbbdfbe952a8/go.mod h1:7ZGDhoNTkKxVwqejBrsexg1Sh1zKD402CAAg1f0gLRU=
 github.com/clong1995/go-config v0.0.0-20260315015120-b950f867acd6 h1:vQaXVy3ztBE1B7W8HnIhbOSlTAhj6x0bvtBjGjgVtyc=
 github.com/clong1995/go-config v0.0.0-20260315015120-b950f867acd6/go.mod h1:ugF8THQGBMTUneeVe48NNEzi5zCZ3z8g6K/3LeMtO9c=
+github.com/clong1995/go-config v0.0.0-20260315034624-b146bab75bf4 h1:dmH9BUA7DkhgJ5Ml/7kmYstOO1XM9glaiiMEPFqlSmQ=
+github.com/clong1995/go-config v0.0.0-20260315034624-b146bab75bf4/go.mod h1:ugF8THQGBMTUneeVe48NNEzi5zCZ3z8g6K/3LeMtO9c=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

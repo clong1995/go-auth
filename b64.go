@@ -14,7 +14,7 @@ var authKeyLen int
 // 它会尝试从配置中读取名为 "AUTH KEY" 的值。
 // 如果该值存在，则将其作为密钥存储在包级变量 authKey 中，用于后续的XOR操作。
 func init() {
-	if key, exists := config.Value("AUTH KEY"); exists && key != "" {
+	if key, exists := config.Value[string]("AUTH KEY"); exists && key != "" {
 		authKey = []byte(key)
 		authKeyLen = len(authKey)
 	}
