@@ -15,7 +15,8 @@ func TestID(t *testing.T) {
 	}{
 		{
 			name: "获取id",
-			args: args{ak: "bFRqZflzZXRqWODUvwQ7dg"},
+			//args: args{ak: "bFRqZflzZXRqWODUvwQ7dg"},
+			args: args{ak: "cYdI6vYrNRjiDpHU7VdqMA"}, //1744348770168506225
 		},
 	}
 	for _, tt := range tests {

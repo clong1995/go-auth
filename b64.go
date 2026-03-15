@@ -2,17 +2,16 @@ package auth
 
 import (
 	"encoding/base64"
-	"log"
 
 	"github.com/clong1995/go-config"
+	"github.com/pkg/errors"
 )
 
 var authKey []byte
 var authKeyLen int
 
 func init() {
-	key := config.Value("AUTH KEY")
-	if key != "" {
+	if key, exists := config.Value("AUTH KEY"); exists && key != "" {
 		authKey = []byte(key)
 		authKeyLen = len(authKey)
 	}
@@ -35,12 +34,11 @@ func encodeB64(bytes []byte) string {
 }
 
 // 解密base64的string为byte[]
-func decodeB64(str string) (bytes []byte, err error) {
-	bytes, err = base64.RawURLEncoding.DecodeString(str)
+func decodeB64(str string) ([]byte, error) {
+	bytes, err := base64.RawURLEncoding.DecodeString(str)
 	xor(bytes)
 	if err != nil {
-		log.Println(err)
-		return
+		return nil, errors.Wrap(err, "")
 	}
-	return
+	return bytes, nil
 }
