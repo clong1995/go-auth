@@ -4,5 +4,7 @@ github.com/clong1995/go-config v0.0.0-20260315015120-b950f867acd6 h1:vQaXVy3ztBE
 github.com/clong1995/go-config v0.0.0-20260315015120-b950f867acd6/go.mod h1:ugF8THQGBMTUneeVe48NNEzi5zCZ3z8g6K/3LeMtO9c=
 github.com/clong1995/go-config v0.0.0-20260315034624-b146bab75bf4 h1:dmH9BUA7DkhgJ5Ml/7kmYstOO1XM9glaiiMEPFqlSmQ=
 github.com/clong1995/go-config v0.0.0-20260315034624-b146bab75bf4/go.mod h1:ugF8THQGBMTUneeVe48NNEzi5zCZ3z8g6K/3LeMtO9c=
+github.com/clong1995/go-config v0.0.0-20260315070032-d84683978967 h1:KmV+/XjLjKPxs2z0K7NaAKiEjxhSnSTDgh1rR898go4=
+github.com/clong1995/go-config v0.0.0-20260315070032-d84683978967/go.mod h1:ugF8THQGBMTUneeVe48NNEzi5zCZ3z8g6K/3LeMtO9c=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
