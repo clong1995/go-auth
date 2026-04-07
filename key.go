@@ -78,6 +78,15 @@ func ID(ak string) (int64, int64, error) {
 	return id, session, nil
 }
 
+func Auth(id, session int64) (string, string, error) {
+	ak, err := AccessID(id, session)
+	if err != nil {
+		return "", "", err
+	}
+	sk := secretAccess(id, session)
+	return ak, sk, nil
+}
+
 // secretAccess 是一个内部函数，用于根据 id 和 session 生成最终的 SecretKey (sk)。
 // 生成规则：
 // 1. 计算 i = (session + id) * 2。
