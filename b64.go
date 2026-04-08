@@ -40,7 +40,7 @@ func decodeB64(str string) ([]byte, error) {
 	bytes, err := base64.RawURLEncoding.DecodeString(str)
 	if err != nil {
 		// 注意：如果解码失败，不应该继续执行XOR操作。
-		return nil, errors.Wrap(err, "base64解码失败")
+		return nil, errors.WithStack(err)
 	}
 	xor(bytes) // Base64解码成功后，再进行XOR操作
 	return bytes, nil

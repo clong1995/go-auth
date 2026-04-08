@@ -19,7 +19,7 @@ func SecretAccess(ak string) (string, error) {
 	}
 	id, session, err := ID(ak)
 	if err != nil {
-		return "", errors.Wrap(err, "get secret access key failed")
+		return "", err
 	}
 	return secretAccess(id, session), nil
 }
@@ -63,11 +63,11 @@ func ID(ak string) (int64, int64, error) {
 	}
 	bs, err := decodeB64(ak)
 	if err != nil {
-		return 0, 0, errors.Wrap(err, "decode secret access key failed")
+		return 0, 0, err
 	}
 
 	if len(bs) < 16 {
-		return 0, 0, errors.Wrap(err, "invalid access key length")
+		return 0, 0, err
 	}
 
 	session := int64(binary.LittleEndian.Uint64(bs[:8]))

@@ -7,4 +7,4 @@ require (
 	github.com/pkg/errors v0.9.1
 )
 
-require github.com/clong1995/go-ansi-color v0.0.0-20260314102151-cbbdfbe952a8 // indirect
+require github.com/clong1995/go-ansi-color v0.0.0-20260329160324-213fff2ee7eb // indirect

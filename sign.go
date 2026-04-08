@@ -31,7 +31,7 @@ func Check(sign string, out int64, req []byte) (string, error) {
 	// 解析请求体
 	pData := new(preData)
 	if err := json.Unmarshal(req, pData); err != nil {
-		return "", errors.Wrap(err, "请求体解码失败")
+		return "", errors.WithStack(err)
 	}
 	if pData.AccessKeyID == "" {
 		return "", errors.New("missing access key id")
@@ -47,7 +47,7 @@ func Check(sign string, out int64, req []byte) (string, error) {
 	// 重新计算签名以进行校验
 	resign, err := Sign(req, ak)
 	if err != nil {
-		return "", errors.Wrap(err, "生成签名失败")
+		return "", err
 	}
 
 	// 对比客户端签名和服务端计算的签名
@@ -72,7 +72,7 @@ func Sign(req []byte, ak string) (string, error) {
 	// 通过 AccessKey 获取对应的 SecretKey
 	sk, err := SecretAccess(ak)
 	if err != nil {
-		return "", errors.Wrap(err, "获取 secret key 失败")
+		return "", err
 	}
 	// 计算签名
 	hash := md5.New()
