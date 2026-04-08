@@ -21,7 +21,7 @@ import (
 // req: 原始的HTTP请求体 []byte。
 //
 // 返回值: 如果校验成功，返回 AccessKeyID 和 nil；否则返回空字符串和相应的错误信息。
-func Check(sign string, out int64, req []byte) (string, error) {
+func Check(sign string, out int64, req []byte, path string) (string, error) {
 	// preData 用于从请求体JSON中解析出 AccessKeyID 和时间戳。
 	type preData struct {
 		AccessKeyID string `json:"a"` // "a" 对应JSON中的 AccessKeyID 字段
@@ -45,7 +45,7 @@ func Check(sign string, out int64, req []byte) (string, error) {
 	ak := pData.AccessKeyID
 
 	// 重新计算签名以进行校验
-	resign, err := Sign(req, ak)
+	resign, err := Sign(req, ak, path)
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +65,7 @@ func Check(sign string, out int64, req []byte) (string, error) {
 // ak:  用户的 AccessKeyID。
 //
 // 返回值: 返回计算出的签名字符串和nil；如果过程出错，则返回空字符串和错误信息。
-func Sign(req []byte, ak string) (string, error) {
+func Sign(req []byte, ak, path string) (string, error) {
 	if ak == "" {
 		return "", errors.New("secret access key is empty")
 	}
@@ -76,6 +76,7 @@ func Sign(req []byte, ak string) (string, error) {
 	}
 	// 计算签名
 	hash := md5.New()
+	req = append(req, path...)
 	hash.Write(append(req, sk...))
 	md5Sum := hash.Sum(nil)
 	return hex.EncodeToString(md5Sum), nil
