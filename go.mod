@@ -3,7 +3,7 @@ module github.com/clong1995/go-auth
 go 1.26
 
 require (
-	github.com/clong1995/go-config v0.0.0-20260325145758-46c5a40c3ecf
+	github.com/clong1995/go-config v0.0.0-20260410163819-3bbb4da18a0a
 	github.com/pkg/errors v0.9.1
 )
 
