@@ -22,7 +22,7 @@ func TestSign(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSign, err := Sign(tt.args.bytes, tt.args.ak)
+			gotSign, err := Sign(tt.args.bytes, tt.args.ak, "xxx")
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Sign() error = %v, wantErr %v", err, tt.wantErr)
 				return
