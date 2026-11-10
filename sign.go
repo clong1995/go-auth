@@ -70,7 +70,7 @@ func Sign(req []byte, ak, path string) (string, error) {
 		return "", errors.New("secret access key is empty")
 	}
 	// 通过 AccessKey 获取对应的 SecretKey
-	sk, err := SecretAccess(ak)
+	sk, err := secretAccessAK(ak)
 	if err != nil {
 		return "", err
 	}

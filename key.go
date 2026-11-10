@@ -6,18 +6,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-// SecretAccess 是一个高级函数，通过 AccessKey (ak) 获取对应的 SecretKey (sk)。
+// secretAccessAK 是一个高级函数，通过 AccessKey (ak) 获取对应的 SecretKey (sk)。
 // 它的内部流程是：先通过 ID() 函数从 ak 中解码出原始的 id 和 session，
 // 然后调用 secretAccess() 函数来生成 sk。
 //
 // ak: 用户的 AccessKey 字符串。
 //
 // 返回值: 返回生成的 SecretKey 字符串和nil；如果出错则返回空字符串和错误。
-func SecretAccess(ak string) (string, error) {
+func secretAccessAK(ak string) (string, error) {
 	if ak == "" {
 		return "", errors.New("secret access key is empty")
 	}
-	id, session, err := ID(ak)
+	id, session, err := accessIDDecode(ak)
 	if err != nil {
 		return "", err
 	}
@@ -47,7 +47,7 @@ func AccessID(id, session int64) (string, error) {
 	return encodeB64(tsBytes), nil
 }
 
-// ID 是 AccessID 的逆向操作，用于从 AccessKey (ak) 中解码出原始的 id 和 session。
+// accessIDDecode 是 AccessID 的逆向操作，用于从 AccessKey (ak) 中解码出原始的 id 和 session。
 // 解码规则：
 // 1. 对 ak 字符串进行自定义的B64解码，得到16字节的切片。
 // 2. 从前8字节解析出 session。
@@ -57,7 +57,7 @@ func AccessID(id, session int64) (string, error) {
 // ak: AccessKey 字符串。
 //
 // 返回值: 返回解码出的 id, session 和 nil；如果解码失败或ak无效，则返回0, 0和错误。
-func ID(ak string) (int64, int64, error) {
+func accessIDDecode(ak string) (int64, int64, error) {
 	if ak == "" {
 		return 0, 0, errors.New("secret access key is empty")
 	}
